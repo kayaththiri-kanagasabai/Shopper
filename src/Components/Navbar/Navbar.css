@@ -90,7 +90,8 @@
 }
 .nav-dropdown{
   display: none;
-  background: #7a7a7a;
+  background: #b7aeae;
+  border-radius: 19px;
 }
 /* media quries */
 
@@ -128,6 +129,7 @@ padding: 12px 50px;
 .navbar{
   padding: 12px 30px;
 }
+
 .nav-menu{
   gap: 25px;
   font-size: 14px;
@@ -149,13 +151,13 @@ padding: 12px 50px;
   padding: 10px 0px;
 }
 .nav-dropdown{
-  display: none;
+  display: block;
   width: 30px;
   rotate: -90deg;
   transition: 0.5s;
 }
 .nav-menu{
-display: flex;
+display: none;
 height: 80px;
 width: 100%;
 position: absolute;
