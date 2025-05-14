@@ -1,12 +1,12 @@
-import React, { createContext, useState } from 'react'
-import all_product from "../Components/Assets/all_product"
+import React, { createContext, useEffect, useState } from 'react'
+
 
 export const ShopContext= createContext(null);
 
 //set in the cart to every product as 0 index as default
 const getDefaultCart=()=>{
   let cart ={};
-  for(let index=0; index < all_product.length+1; index++)
+  for(let index=0; index < 300+1; index++)
   {
     cart[index]=0;
   }
@@ -15,18 +15,70 @@ const getDefaultCart=()=>{
 
 const ShopContextProvider = (props) =>{
 
+  const [all_product,setAll_Product] = useState([]);
   const [cartItems,setCartItems]=useState(getDefaultCart());
+
+  useEffect(()=>{
+      fetch('http://localhost:3001/allproducts')
+      .then((response)=>response.json())
+      .then ((data)=>setAll_Product(data))
+
+      if(localStorage.getItem('auth-token')){
+        fetch('http://localhost:3001/getcart',
+          {
+            method:'POST',
+            headers:
+            {
+              Accept:'application/form-data',
+              'auth-token':`${localStorage.getItem('auth-token')}`,
+              'Content-Type':'application/json',
+            },
+            body:"",
+          }
+        ).then((response)=>response.json())
+         .then((data)=>setCartItems(data));
+      }
+  },[])
 
 // when click the ADD TO CART button this function will be add one product in the cart
   const addToCart=(itemId)=>{
     setCartItems((prev)=>({...prev,[itemId]:prev[itemId]+1}));
-    
+    if(localStorage.getItem('auth-token')){
+      fetch('http:/localhost:3001/addtocart',{
+        method:'POST',
+        headers:{
+          Accept:'application/form-data',
+          'auth-token':`${localStorage.getItem('auth-token')}`,
+          'Content-Type':'application/json',
+
+        },
+        body:JSON.stringify({"ItemId":itemId}),
+      })
+      .then((response)=>response.json())
+      .then((data)=>console.log(data));
+    }
   }
   
       
 // when click the REMOVE FROM CART button this function will be remove that product from the cart
   const removeFromCart=(itemId)=>{
     setCartItems((prev)=>({...prev,[itemId]:prev[itemId]-1}));
+
+    if(localStorage.getItem('auth-token'))
+    {
+      fetch('http:/localhost:3001/removefromcart',{
+        method:'POST',
+        headers:{
+          Accept:'application/form-data',
+          'auth-token':`${localStorage.getItem('auth-token')}`,
+          'Content-Type':'application/json',
+
+        },
+        body:JSON.stringify({"ItemId":itemId}),
+      })
+      .then((response)=>response.json())
+      .then((data)=>console.log(data));
+    }
   }
 
 const getTotalCartAmount = () => {
